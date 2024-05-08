@@ -1,4 +1,4 @@
-package com.example.tahaful_java;
+package com.example.tahaful_java.Models;
 public class RCModel {
     public String name;
     public String country;
