@@ -7,6 +7,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     ArrayList<RCModel> modelArrayList;
     RCAdopter rcAdopter;
+    private RequestQueue requestQueue;
+    private TextView textView;
 
 
 
@@ -49,7 +61,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        setContentView(R.layout.details);
+        requestQueue = Volley.newRequestQueue(this);
+        VolleySingleton.getInstance(this);
+        fetchJsonResponse();
         recyclerView =findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
@@ -67,5 +81,27 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    }
+
+
+    private void fetchJsonResponse() {
+        String url = "http://universities.hipolabs.com/search?country=United%20Arab%20Emirates";
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        textView.setText("Response: " + response.toString());
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                textView.setText("Error: " + error.toString());
+            }
+        });
+
+        VolleySingleton.getInstance(this).getRequestQueue().add(jsonObjectRequest);
     }
 }
